@@ -1,0 +1,25 @@
+extends layout
+
+block content
+
+		.row
+			.col-2
+					form(action='updateRow' method='get')
+								p
+									h1 #{data.name}
+										ul
+											li
+												label Name
+												.row
+													.input-field.col.s6
+														input#first_name.validate(type='text', name='name', value =   data.name)
+											li
+												label Phone No.
+												.row
+													.input-field.col.s6
+														input#first_name.validate(type='text', name='phone', value =   data.phone)
+												input(type='hidden', name = 'id',value = data.id)
+											
+										button.btn(type='submit') Update
+
+									

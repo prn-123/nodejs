@@ -18,6 +18,7 @@ let Contacts= {};
 const myModel = mongoose.model('contact', contact);
 
 
+
 Contacts.getAll = function(){
 	return new Promise(function(resolve, reject){
 		const connection = mongoose.connect('mongodb://127.0.0.1:27017/myDB');
@@ -38,6 +39,7 @@ Contacts.getAll = function(){
  }
 
 
+
 Contacts.saveNew = function(newContact){
 	console.log('newContact.phone' + newContact.phone)
 		const connection = mongoose.connect('mongodb://127.0.0.1:27017/myDB');
@@ -52,5 +54,49 @@ Contacts.saveNew = function(newContact){
 			}
         });
 }
+
+
+Contacts.delete = function(Contact){
+	return new Promise(function ( resolve, reject){
+		const connection = mongoose.connect('mongodb://127.0.0.1:27017/myDB');
+		myModel.findOneAndRemove({name:`${Contact.name}`},function(err){
+			if(err){
+				console.log('ERR:Deleting data');
+			}
+			else{
+				resolve(contact);
+			}
+		});	
+});
+}
+
+
+
+/*Contacts.updateRow= function(newContact){
+	return new Promise(function (resolve, reject){
+
+
+		// //Set up default mongoose connection
+		const connection = mongoose.connect('mongodb://127.0.0.1:27017/MyDB');
+
+
+		myModel.findOneAndUpdate({id:`${newContact.id}`}, {name: `${newContact.name}`, phone: `${newContact.phone}` }, function(err, con) {
+		  if (err) {
+				console.log(err);
+				console.log('ERR :: fetching data from database..');
+				reject();
+			}
+			else {
+				//console.log(result);
+				console.log('con.......'+ con);
+				resolve(con);
+
+			}
+		});
+		
+	});
+}
+*/
+
 
 module.exports = Contacts;

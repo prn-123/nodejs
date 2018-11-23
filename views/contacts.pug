@@ -15,4 +15,8 @@ block content
 										h2   Name : #{val.name}
 									li
 										h2   Phone No. : #{val.phone}
+									li
+										a(href='delete?name='+val.name) Delete
+									li
+										a(href='updatePug?id='+ val.id +' & name=' + val.name + '& phone=' + val.phone) Update
 

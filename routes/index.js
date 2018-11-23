@@ -31,6 +31,38 @@ router.get('/getAllContact', function(req,res,next){
 	})
 	.catch(console.log('ERR:Fetching data from database'));
 	});
+router.get('/getAll', function(req,res,next){//REST
+	//console.log(req.query)
+	console.log(Contacts)
+	Contacts.getAll()
+	.then(function(retVal){
+		console.log(retVal);
+		res.send(retVal);
+	})
+	.catch(console.log('ERR:Fetching data from database'));
+	});
+
+router.get('/delete',function(req,res,next){
+  Contacts.delete(req.query)
+  .then(function(){
+  	res.redirect('/getAllContact');
+  })	
+  .catch(console.log('ERR:deleting data'));
+});
+
+/*router.get('/updateRow', function(req, res, next) {
+	Contacts.updateRow(req.query)
+	.then(function(){
+		console.log('reachede here')
+	 	res.redirect('/getAllContact')
+	 })
+    .catch(console.log('ERR :: is resolving the promise'))
+});
+router.get('/updatePug', function(req, res, next) {
+	 	res.render('update',{data:req.query});
+	 })
+	 */
+
 
 module.exports = router;
 
