@@ -1,0 +1,156 @@
+1.npm install express
+
+2.npm install -g express-generator
+
+3.[Create a  folder MyApp]
+express --view=pug MyApp
+
+
+* Create a folder models in MyApp(vscode).
+* Add heroes.json file inside models and write som json content.
+* Inside app.js
+
+	var hjd = require('./models/heroes.json');
+	app.get("/url", (req, res, next) => {
+        res.json(hjd);
+        });
+
+
+
+
+* customer.controller.js =>
+var customers = {
+				customer1: {
+					firstname: "Jack",
+					lastname: "Davis",
+					age: 25,
+					id: 1
+				},
+				customer2: {
+					firstname: "Mary",
+					lastname: "Taylor",
+					age: 37,
+					id: 2
+				},
+				customer3: {
+					firstname: "Peter",
+					lastname: "Thomas",
+					age: 17,
+					id: 3
+				},
+				customer4: {
+					firstname: "Peter",
+					lastname: "Thomas",
+					age: 17,
+					id: 4
+				}
+			}
+
+exports.create = function(req, res) {
+	var newCustomer = req.body;
+    customers["customer" + newCustomer.id] = newCustomer;
+	console.log("--->After Post, customers:\n" + JSON.stringify(customers, null, 4));
+    res.end("Post Successfully: \n" + JSON.stringify(newCustomer, null, 4));
+};
+
+exports.findAll = function(req, res) {
+    console.log("--->Find All: \n" + JSON.stringify(customers, null, 4));
+    res.end("All Customers: \n" + JSON.stringify(customers, null, 4));  
+};
+
+exports.findOne = function(req, res) {
+    var customer = customers["customer" + req.params.id];
+    console.log("--->Find customer: \n" + JSON.stringify(customer, null, 4));
+    res.end( "Find a Customer:\n" + JSON.stringify(customer, null, 4));
+};
+
+exports.update = function(req, res) {
+	var id = parseInt(req.params.id);
+	var updatedCustomer = req.body; 
+	if(customers["customer" + id] != null){
+		// update data
+		customers["customer" + id] = updatedCustomer;
+
+		console.log("--->Update Successfully, customers: \n" + JSON.stringify(customers, null, 4))
+		
+		// return
+		res.end("Update Successfully! \n" + JSON.stringify(updatedCustomer, null, 4));
+	}else{
+		res.end("Don't Exist Customer:\n:" + JSON.stringify(updatedCustomer, null, 4));
+	}
+};
+
+exports.delete = function(req, res) {
+	var deleteCustomer = customers["customer" + req.params.id];
+    delete customers["customer" + req.params.id];
+    console.log("--->After deletion, customer list:\n" + JSON.stringify(customers, null, 4) );
+    res.end( "Deleted customer: \n" + JSON.stringify(deleteCustomer, null, 4));
+};
+
+
+
+* customer.routes.js =>
+
+module.exports = function(app) {
+
+    var customers = require('../controllers/customer.controller.js');
+
+    // Create a new Customer
+    app.post('/api/customers', customers.create);
+
+    // Retrieve all Customer
+    app.get('/api/customers', customers.findAll);
+
+    // Retrieve a single Customer by Id
+    app.get('/api/customers/:id', customers.findOne);
+
+    // Update a Customer with Id
+    app.put('/api/customers/:id', customers.update);
+
+    // Delete a Customer with Id
+    app.delete('/api/customers/:id', customers.delete);
+}
+
+
+
+* server.js =>
+
+var express = require('express');
+var app = express();
+var bodyParser = require('body-parser');
+app.use(bodyParser.json())
+
+require('./app/routes/customer.routes.js')(app);
+
+// Create a Server
+var server = app.listen(8081, function () {
+
+  var host = server.address().address
+  var port = server.address().port
+
+  console.log("App listening at http://%s:%s", host, port)
+
+})
+
+
+
+* Package.json =>
+
+{
+  "name": "nodejs-restapi",
+  "version": "1.0.0",
+  "description": "NodeJs-RestApis",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "NodeJs-RestAPIs"
+  ],
+  "author": "JSA",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.3"
+  }
+}
