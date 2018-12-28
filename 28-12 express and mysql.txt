@@ -1,0 +1,264 @@
+users.js
+========
+var mysql = require('mysql');
+
+var connection = mysql.createConnection({
+	host: 'localhost',
+	user: 'root',
+	password: 'ccs#1234',
+	port: '3306',
+	database: 'contacts'
+});
+
+
+exports.select = function(req,res){
+	var query = connection.query("select * from contact", function(err,rows){
+		if(err){
+			console.log("Error in selected query");
+		}
+		else{
+			res.send(rows);
+		}
+	}); 
+}
+
+//insert query function
+exports.add = function(req,res){
+	/*var data = {
+		name: 'Jincy Johnson',
+		location: 'Kollam'
+	};*/
+	var data = {
+		name: req.body.name, 
+        location: req.body.location
+	};
+	var query = connection.query("insert contact set ?",[data], function(err,rows){
+		if(err){
+			console.log("Error in insert query");
+		}
+		else{
+			res.redirect('/');
+		}
+	}); 
+} 
+
+
+//update query function
+exports.update = function(req,res){
+	//defining id as dynamic request parameter
+	var id = req.params.id;
+
+	//data object which want to update
+	/*var data = {
+		name: req.body.name,
+		location: req.body.location
+		 update contact set name='sincy', location='ernakulam' where id=11;
+	};
+	var query = connection.query(`update contact set name ='xyz', location ='asdf' where id =${id}`, function(err,rows){
+		if(err){
+			console.log("Error in update query");
+		}
+		else{
+			res.redirect('/');
+		}
+	});
+	*/
+	 let _query = `UPDATE contact SET name='${req.body.name}',location='${req.body.location}' where id = '${req.params.id}'`;
+    connection.query(_query, (err, rows, fields) => {
+
+        if (!err) {
+
+            res.send(req.body);
+            //res.send('Updated successfully.');
+
+        }
+        else
+
+            console.log(err);
+
+    }) 
+} 
+
+//delete query function
+exports.delete = function(req,res){
+	//defining id as dynamic request parameter
+	var id = req.params.id;
+
+	var query = connection.query("delete from contact where id = ?",[id], function(err,rows){
+		if(err){
+			console.log("Error in delete query");
+		}
+		else{
+			res.redirect('/');
+		}
+	}); 
+} 
+
+
+index.js
+=========
+var express = require('express');
+var app = express();
+
+//using router to define custom url.
+var router = express.Router();
+
+//importing  users.js.
+var users = require('./users.js');
+
+//going to use router to call select function.
+router.get('/', users.select);
+
+//going to use router to call insert function.
+router.post('/add', users.add);
+
+//going to use router to call update function.
+router.put('/update/:id', users.update);
+
+//going to use router to call update function.
+router.delete('/delete/:id', users.delete);
+
+//telling engine to use router in our app.
+app.use('/', router);
+
+/*app.get('/',function(req,res){
+	res.send('Hello World!');
+});
+*/
+
+app.listen('3000', function(req,res){
+	console.log('Server is listening at port no. 3000');
+});
+
+
+
+
+
+
+
+====================================================================================================
+
+index.js
+========
+const mysql = require('mysql2');
+
+const express = require('express');
+
+var app = express();
+
+const bodyparser = require('body-parser');
+
+app.use(bodyparser.json());
+
+var mysqlConnection = mysql.createConnection({
+
+    host: 'localhost',
+
+    user: 'root',
+
+    password: 'ccs#1234',
+
+    database: 'contacts',
+
+});
+
+mysqlConnection.connect((err) => {
+
+    if (!err)
+
+        console.log('DB connection succeded.');
+
+    else
+
+        console.log('DB connection failed \n Error : ' + JSON.stringify(err, undefined, 2));
+
+});
+
+app.listen(3000, () => console.log('Express server is runnig at port no : 3000'));
+
+//Get all Customers
+app.get('/contacts', (req, res) => {
+
+    mysqlConnection.query('SELECT * FROM customrs', (err, rows, fields) => {
+
+        if (!err)
+
+            res.send(rows);
+
+        else
+
+            console.log(err);
+
+    })
+
+});
+
+//Get an employees
+app.get('/contacts/:id', (req, res) => {
+
+    mysqlConnection.query('SELECT * FROM contact WHERE id = ?', [req.params.id], (err, rows, fields) => {
+
+        if (!err) {
+            res.send(rows);
+        }
+
+        else
+            console.log(err);
+
+    })
+
+});
+
+//Delete an employees
+app.delete('/delete/:id', (req, res) => {
+
+    mysqlConnection.query('DELETE FROM contact WHERE id = ?', [req.params.id], (err, rows, fields) => {
+
+        if (!err)
+
+            res.send('Deleted successfully.');
+
+        else
+
+            console.log(err);
+
+    })
+
+});
+
+//Update
+app.put('/update/:id', (req, res) => {
+    let _query = `UPDATE contact SET name='${req.body.name}',location='${req.body.location}' where id = '${req.params.id}'`;
+    mysqlConnection.query(_query, (err, rows, fields) => {
+
+        if (!err) {
+
+            res.send(req.body);
+            //res.send('Updated successfully.');
+
+        }
+        else
+
+            console.log(err);
+
+    })
+});
+
+//Create
+app.post('/add', (req, res) => {
+    let _query = `INSERT INTO contact(name,location) VALUES('${req.body.name}','${req.body.location}')`;
+    mysqlConnection.query(_query, (err, rows, fields) => {
+
+        if (!err) {
+
+            res.send(req.body);
+            //res.send('Updated successfully.');
+
+        }
+        else
+
+            console.log(err);
+
+    })
+});
+
