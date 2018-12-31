@@ -1,0 +1,90 @@
+employee.js
+===========
+const express = require('express');
+const app = express();
+const mysql = require('mysql');
+const bodyparser = require('body-parser');
+
+app.use(bodyparser.json());//Without body parser post and put won't work.
+
+const connection = mysql.createConnection({
+    host: 'localhost',
+    user: 'root',
+    password: 'ccs#1234',
+    port: '3306',
+    database: 'employees'
+});
+
+app.get('/employees', (req, res) => {
+    //var sql = "select * from employee";
+    var qry = connection.query("select * from employee", (err, rows) => {
+        if (err) {
+            console.log("Error in fetching data from database");
+            res.send("Error in fetching data from database");
+        }
+        else {
+            res.json(rows);
+        }
+    });
+});
+
+app.post('/employees/add', function (req, res) {
+    var sql = `insert into employee (eName, eLocation) values('${req.body.eName}', '${req.body.eLocation}')`;
+    var qry = connection.query(sql, function (err, rows) {
+        if (err) {
+            console.log("Error in posting data from database");
+            res.send("Error in posting data from database");
+        }
+        else {
+            res.send("Successful");
+        }
+    });
+});
+
+app.put('/employees/update/:id', (req, res) => {
+    var sql = "update employee set eName = ?, eLocation = ? where eId = ?";
+    connection.query(sql, [req.body.eName, req.body.eLocation, req.params.id], (err, rows) => {
+        if (err) {
+            console.log("Error in posting data from database");
+            res.send("Error in posting data from database");
+        }
+        else {
+            res.send("Successful");
+        }
+    });
+});
+
+app.delete('/employees/delete/:id', function (req, res) {
+    var id = req.params.id;
+    connection.query("delete from employee where eId = ?", [id], function (err, rows) {
+        if (err) {
+            console.log("Error in deleting data from database");
+            res.send("Error in deleting data from database");
+        }
+    });
+});
+
+/*app.get('/', (req,res)=>{
+    console.log("..........");
+    res.send("Hellooooooo........")
+});
+
+/*var emp1 = {eName: "Pournami", eLocation: "Pathanamthitta"};
+const emp2 = {id:3, name: "Keerthi"};
+app.get("/employees", (req,res) =>{
+    res.json([emp1,emp2]);
+})
+
+app.get('/prn/:name', (req,res)=>{
+    console.log("..........");
+    //res.send("Hellooooooo........" + req.params.name);
+    res.send(`Hellooooooo........ ${req.params.name} R Nair`);
+});
+*/
+
+app.listen('3000', function () {
+    console.log("Server is running on port 3000.....");
+});
+
+
+============================================================================================================================
