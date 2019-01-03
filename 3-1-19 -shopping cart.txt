@@ -1,0 +1,49 @@
+node js jwt authentication mysql ----> https://www.youtube.com/watch?v=3JZyMI3gh4c
+
+https://www.youtube.com/watch?v=7nafaH9SddU
+
+===============JWT================================================
+app.post('/login', (req, res) => {
+    const user = {
+        RoleId: 1,
+        Email: 'brad@gmail.com',
+        Password: 'brad'
+    };
+
+    jwt.sign({ user }, 'secretkey', { expiresIn: '300s' }, (err, token) => {
+        res.json({
+            token
+        });
+    });
+});
+app.post('/posts', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(403);
+        } else {
+            res.json({
+                message: 'Post created...',
+                authData
+            });
+        }
+    });
+});
+function verifyToken(req, res, next) {
+    // Get auth header value
+    const bearerHeader = req.headers['authorization'];
+    // Check if bearer is undefined
+    if (typeof bearerHeader !== 'undefined') {
+        // Split at the space
+        const bearer = bearerHeader.split(' ');
+        // Get token from array
+        const bearerToken = bearer[1];
+        // Set the token
+        req.token = bearerToken;
+        // Next middleware
+        next();
+    } else {
+        // Forbidden
+        res.sendStatus(403);
+    }
+};
+==========================================
