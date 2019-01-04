@@ -1,0 +1,204 @@
+var mysql = require('mysql');
+var express = require('express');
+var app = express();
+const bodyparser = require('body-parser');
+const Joi = require('joi');
+var crypto = require("crypto");
+const jwt = require('jsonwebtoken');
+
+
+app.use(bodyparser.json());
+
+
+var connection = mysql.createConnection({
+    host: 'papldb.cjupr4mqlpqh.ap-south-1.rds.amazonaws.com',
+    port: 3306,
+    user: 'root',
+    password: 'Butlers#123',
+    database: 'bestprice',
+    multipleStatements: true
+});
+
+
+app.get('/RegistrationService', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(401);
+            console.log(err);
+        }
+        else {
+            var qry = connection.query("select * from registration ", (err, rows) => {
+                if (err) {
+                    //where RoleId = 1
+                    console.log("Error in fetching data from database");
+                    res.send("Error in fetching data from database");
+                }
+                else {
+                    res.json(rows);
+                }
+            });
+        }
+    });
+});
+
+
+app.post('/RegistrationService', (req, res) => {
+
+    const schema = Joi.object().keys({
+        Name: Joi.string().required(),
+        MobileNo: Joi.number().integer().min(1000000000).max(9999999999).required(),
+        Email: Joi.string().trim().email().required(),
+        Password: Joi.string().min(4).max(8).required(),
+        RoleId: Joi.number().integer().min(1).max(2)
+    });
+    Joi.validate(req.body, schema, (err, result) => {
+        if (err) {
+            console.log(err);
+            res.send('An error has occurred');
+        }
+        else {
+            console.log(result);
+            res.send('Successfully posted data');
+
+        }
+
+    });
+    //var key = "My Secret Key";
+    var password = encrypt(key, req.body.Password);
+
+    var sql = `insert into registration(Name, MobileNo, Email, Password, RoleId, CreatedTime, LastUpdatedTime) 
+    values('${req.body.Name}', ${req.body.MobileNo}, '${req.body.Email}', '${password}', ${req.body.RoleId}, 
+    now(), now())`;
+    connection.query(sql, function (err, rows) {
+
+        if (err) {
+            console.log(err);
+            console.log("Error in posting data to database");
+        }
+        else {
+            console.log(rows);
+        }
+    });
+
+});
+
+
+app.put('/UpdateUserService', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        if (err) {
+            res.sendStatus(401);
+            console.log(err);
+        }
+        else {
+            const schema = Joi.object().keys({
+                User_id: Joi.number().integer().required(),
+                Name: Joi.string().required(),
+                MobileNo: Joi.number().integer().min(1000000000).max(9999999999).required(),
+                Email: Joi.string().trim().email().required(),
+                Password: Joi.string().min(4).max(8).required(),
+                RoleId: Joi.number().integer().min(1).max(2),
+                CreatedTime: Joi.date().required()
+            });
+
+            Joi.validate(req.body, schema, (err, result) => {
+                if (err) {
+                    console.log(err);
+                    res.send('An error has occurred');
+                }
+                else {
+                    console.log(result);
+                }
+
+            });
+            var password = encrypt(key, req.body.Password);
+            var sql = `update registration set Name = '${req.body.Name}', MobileNo = ${req.body.MobileNo}, Email = '${req.body.Email}', Password = '${password}', RoleId = '${req.body.RoleId}', CreatedTime = '${req.body.CreatedTime}', LastUpdatedTime = now()  where User_id = ${req.body.User_id}`;
+            connection.query(sql, (err, rows) => {
+                if (err) {
+                    console.log("Error in posting data to database");
+                    //console.log(err);
+                }
+                else {
+                    console.log("Succesful");
+                    res.send("Successful")
+                }
+            });
+            console.log(authData);
+        }
+    });
+});
+
+
+
+
+app.post('/login', (req, res) => {
+    //res.send(req.body);
+    var user = {
+        username: req.body.username,
+        password: req.body.password
+    };
+    console.log(user);
+    jwt.sign({ user }, 'secretkey', (err, token) => {
+        if (err) {
+            console.log(err);
+        }
+        else {
+            res.json({ token });
+        }
+    });
+});
+app.post('/post', verifyToken, (req, res) => {
+    jwt.verify(req.token, 'secretkey', (err, authData) => {
+        console.log(authData);
+        if (err) {
+            res.sendStatus(403);
+        }
+        else {
+            res.json({ message: 'Post created', authData });
+        }
+    });
+});
+
+
+
+
+var key = "My Secret Key ";
+function encrypt(key, data) {
+    var cipher = crypto.createCipher('aes-256-cbc', key);
+    var crypted = cipher.update(data, 'utf-8', 'hex');
+    crypted += cipher.final('hex');
+
+    return crypted;
+}
+
+
+function verifyToken(req, res, next) {
+    //Get Auth Header Value
+    const bearerHeader = req.headers['authorization'];
+    //Check bearer is undefined
+    if (typeof bearerHeader !== 'undefined') {
+        //Split at th space
+        const bearer = bearerHeader.split(' ');
+
+        const bearerToken = bearer[1];
+
+        ///console.log(bearerToken);
+
+        req.token = bearerToken;
+
+        //console.log(req.token);
+        next();
+
+    }
+    else {
+        //Forbidden
+        res.sendStatus(403);
+    }
+}
+
+
+app.listen('3000', function () {
+    console.log("Server is running on port 3000.....");
+});
+
+
+https://github.com/tfredrich/RestApiTutorial.com/tree/master/media
