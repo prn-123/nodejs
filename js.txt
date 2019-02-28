@@ -1,0 +1,796 @@
+wHAT IS THE DIFFERENCE BETWEEN "https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js and offline version
+? 
+
+https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js is using in order to use jQuery from Google or Microsoft.
+To make jQuery work offline need to download it and place it inside your website directory. Then need to reference jQuery like this:  <script src="/script/jquery.min.js"></script>
+
+
+Javascript vs jquery?
+
+Javascript is a programming language whereas jQuery is a framework to help make writing in javascript easier. jQuery was written using JavaScript, and is a library to be used by JavaScript. jQuery is easier to use compared to JavaScript and its other JavaScript libraries. You need to write fewer lines of code while using jQuery, in comparison with JavaScript.
+
+
+what is meant by a CDN?
+
+A content delivery network (CDN) is a group of servers distributed in different locations. CDN is a system of distributed servers (network) that deliver pages and other Web content to a user, based on the geographic locations of the user. The closer the CDN server is to the user geographically, the faster the content will be delivered to the user. 
+Google CDN:
+<head>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+</head>
+
+What happens when you type an URL in the browser and press enter?
+
+You enter a URL into a web browser
+The browser looks up the IP address for the domain name via DNS
+The browser sends a HTTP request to the server
+The server sends back a HTTP response
+The browser begins rendering the HTML
+The browser sends requests for additional objects embedded in HTML (images, css, JavaScript) and repeats steps 3-5.
+Once the page is loaded, the browser sends further async requests as needed.
+
+
+DNS ?
+The Domain Name System (DNS) is a hierarchical and decentralized naming system for computers, services, or other resources connected to the Internet or a private network. 
+
+Domain Name:- A domain name is your website name. A domain name is the address where Internet users can access your website. A domain name is used for finding and identifying computers on the Internet. 
+
+IP:- An identifier for a computer or device on a TCP/IP network.
+
+
+DNS is the system to link domain names and IP addresses to each other.
+==============================================================================================
+@model SAPPERI.Model.Model.RegstrationTable
+@{
+    ViewBag.Title = "Index";
+}
+
+
+<h1 text-align="right">Registration</h1>
+<div class="submit">
+    <a href="@Url.Action("Index","Home")">Go Back</a>
+</div>
+
+<div></div>
+<div></div>
+
+<link rel="stylesheet" type="text/css" href="~/Content/CSS/Style.css">
+<link href="~/Content/bootstrap.css" rel="stylesheet" />
+<link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+<link href="~/Content/CSS/sweetalert.css" rel="stylesheet" />
+<link href="~/Content/Site.css" rel="stylesheet" />
+
+
+@using (Html.BeginForm())
+{
+    <table style="width:50%" class="responsive-table">
+        <tr>
+            <td>@Html.LabelFor(m => m.Name)</td>
+            <td>@Html.TextBoxFor(m => m.Name, new { @class = "form-control", id = "Name" })</td>
+            <td>@Html.ValidationMessageFor(m => m.Name)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.UserName)</td>
+            <td>@Html.TextBoxFor(m => m.UserName, new { @class = "form-control", id = "UserName" })</td>
+            @*, onchange = "CheckAvailability();"*@
+            <td>@Html.ValidationMessageFor(m => m.UserName)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.Email)</td>
+            <td>@Html.TextBoxFor(m => m.Email, new { @class = "form-control" })</td>
+            <td>@Html.ValidationMessageFor(m => m.Email)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.Address)</td>
+            <td>@Html.TextBoxFor(m => m.Address, new { @class = "form-control" })</td>
+            <td>@Html.ValidationMessageFor(m => m.Address)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.Password)</td>
+            <td>@Html.PasswordFor(m => m.Password, new { @class = "form-control" })</td>
+            <td>@Html.ValidationMessageFor(m => m.Password)</td>
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.ConfirmPassword)</td>
+            <td>@Html.PasswordFor(m => m.ConfirmPassword, new { @class = "form-control" })</td>
+            <td>@Html.ValidationMessageFor(m => m.ConfirmPassword) </td>
+
+        </tr>
+        <tr>
+            <td>@Html.LabelFor(m => m.Mobile)</td>
+            <td>@Html.TextBoxFor(m => m.Mobile, new { @class = "form-control" })</td>
+            <td>@Html.ValidationMessageFor(m => m.Mobile)</td>
+        </tr>
+        <tr>
+            <td></td>
+            <td></td>
+            <td></td>
+        </tr>
+    </table>
+    <input type="submit" value="Register" class="btn btn-primary" />
+}
+
+
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+<script type="text/javascript">
+
+    //$("#Name").on("change", function () {
+    //    alert("The text has been changed.");
+    //});
+    $(document).ready(function () {
+        $("#UserName").change(function () {
+            var userName = $("#UserName").val();
+            $.ajax({
+                url: "/Registration/Check",
+                type: "POST",
+                data: { 'UserName': userName },
+                success: function (r) {
+                    if (r == false) {
+                        $("#UserName").val("");
+                        alert("User Name is already existing...Try another one!");
+                    }
+                },
+                error: function (xhr) {
+                    console.log(xhr);
+                }
+            });
+        });
+    });
+
+    //Checks whether user name is already existing or not
+    //function CheckAvailability() {
+    //    var userName = $("#UserName").val();
+    //    $.ajax({
+    //        url: "/Registration/Check",
+    //        type: "POST",
+    //        data: { 'UserName': userName },
+    //        success: function (r) {
+    //            Success(r);
+    //        },
+    //        error: function (xhr) {
+    //            console.log(xhr);
+    //        }
+    //    });
+    //};
+
+
+    //function Success(r) {
+    //    if (r == false) {
+    //        $("#UserName").val("");
+    //        alert("User Name is already existing...Try another one!");
+    //    }
+    //};
+    
+</script>
+
+RegistrationController====
+using SAPPERI.Biz;
+using SAPPERI.Model.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Web;
+using System.Web.Mvc;
+
+namespace SAPPERI.Application.Controllers
+{
+    public class RegistrationController : Controller
+    {
+        private readonly RegistrationManager _registrationManager;
+
+        public RegistrationController(RegistrationManager registrationManager)
+        {
+            _registrationManager = registrationManager;
+        }
+
+        // GET: Registration
+        public ActionResult Index()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Save data to database
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult Index(RegstrationTable entity)
+        {
+            if (ModelState.IsValid)
+            {
+
+                var ID = _registrationManager.Save(entity);
+
+                return RedirectToAction("Message", "Registration");
+
+            }
+            return RedirectToAction("Index");
+
+        }
+
+        /// <summary>
+        /// For displaying message
+        /// </summary>
+        /// <returns></returns>
+        public ActionResult Message()
+        {
+            return View();
+        }
+
+
+        public ActionResult Check()
+        {
+            return View();
+        }
+
+        /// <summary>
+        /// Checks user name duplication
+        /// </summary>
+        /// <param name="UserName"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public ActionResult CheckUserName(string UserName)
+        {
+            RegstrationTable regTable = new RegstrationTable();
+            regTable.UserName = UserName;
+            Int32 count = _registrationManager.(regTable);
+            if (count == 0)
+            {
+                return Json(true);
+            }
+            return Json(false);
+        }
+    }
+}
+
+RegistrationManager===
+
+using DapperBase;
+using SAPPERI.Model.Model;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace SAPPERI.Biz
+{
+    public class RegistrationManager
+    {
+        private readonly IDapperRepository _repository;
+
+        public RegistrationManager(IDapperRepository repository)
+        {
+            _repository = repository;
+        }
+
+        /// <summary>
+        /// Save user data to databse.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public Int64 Save(RegstrationTable entity)
+        {
+            Int64 ID = 0;
+
+            _repository.BeginTransaction();
+
+            ID = _repository.Insert("Insert into registrationtable (Name,UserName,Email,Address,Password,Mobile) values (@Name, @UserName, @Email, @Address, @Password, @Mobile)", entity);
+
+            _repository.CommitChanges();
+
+            return ID;
+        }
+
+        /// <summary>
+        /// Checking User Name Duplication
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        public Int32 CheckUserNameManager(RegstrationTable entity)
+        {
+            Int32 count = 0;
+
+            _repository.BeginTransaction();
+
+            count = _repository.FirstOrDefault<Int32>("select count(*) from registrationtable where UserName = @UserName", entity);
+            _repository.CommitChanges();
+
+            return count;
+        }
+    }
+}
+
+DapperRepository========
+
+using System;
+using System.Collections.Generic;
+using System.Data;
+using System.Linq;
+using System.Web;
+using global::Dapper;
+using MySql.Data.MySqlClient;
+using System.Configuration;
+using SAPPERI.Model.SeviceModel;
+using System.Reflection;
+using SAPPERI.Service;
+using System.Web.Mvc;
+
+namespace DapperBase
+{
+    public class DapperRepository : IDapperRepository
+    {
+        private readonly IDbConnection connection;
+        private readonly object lockObj = new object();
+        private IDbTransaction transaction;
+        private bool isTransaction = false;
+        private String providerName;
+        private List<AuditTrialServiceModel> auditTrialSMList = new List<AuditTrialServiceModel>();
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DapperRepository"/> class.
+        /// </summary>
+        /// <param name="connectionStringName">Name of the connection string.</param>
+        public DapperRepository(string connectionStringName)
+            : this(DbConnectionFactory.GetConnectionFor(connectionStringName))
+        {
+            providerName = ConfigurationManager.ConnectionStrings[connectionStringName].ProviderName;
+
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="DapperRepository"/> class.
+        /// </summary>
+        /// <param name="connection">The connection.</param>
+        /// <exception cref="System.ArgumentNullException">connection - An IDbConnection must be provided</exception>
+        public DapperRepository(IDbConnection connection)
+        {
+            if (connection == null)
+            {
+                throw new ArgumentNullException("connection", "An IDbConnection must be provided");
+            }
+
+            this.connection = connection;
+
+            //if (isTransaction)
+            //{
+            //    this.transaction = this.BeginTransaction();
+            //    this.isTransaction = true;
+            //}
+        }
+
+        /// <summary>
+        /// Begins the transaction.
+        /// </summary>
+        /// <param name="isolationLevel">The isolation level.</param>
+        /// <returns></returns>
+        public IDbTransaction BeginTransaction(IsolationLevel isolationLevel = IsolationLevel.Unspecified)
+        {
+            this.CheckConnectionIsOpen();
+            this.isTransaction = true;
+
+            this.transaction = this.connection.BeginTransaction(isolationLevel);
+
+            return this.transaction;
+        }
+
+        /// <summary>
+        /// Firsts the or default.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="command">The command.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public TEntity FirstOrDefault<TEntity>(string command, object param = null)
+        {
+            return this.Query<TEntity>(command, param).FirstOrDefault();
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public IEnumerable<TEntity> Query<TEntity>(string commandText, object param = null)
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TEntity>(commandText, param, commandType: CommandType.Text, transaction: this.transaction);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TReturn>(string commandText, Func<TFirst, TSecond, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TThird">The type of the third.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TReturn>(string commandText, Func<TFirst, TSecond, TThird, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TThird, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TThird">The type of the third.</typeparam>
+        /// <typeparam name="TFourth">The type of the fourth.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TReturn>(string commandText, Func<TFirst, TSecond, TThird, TFourth, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TThird, TFourth, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TThird">The type of the third.</typeparam>
+        /// <typeparam name="TFourth">The type of the fourth.</typeparam>
+        /// <typeparam name="TFifth">The type of the fifth.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(string commandText, Func<TFirst, TSecond, TThird, TFourth, TFifth, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TThird, TFourth, TFifth, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TThird">The type of the third.</typeparam>
+        /// <typeparam name="TFourth">The type of the fourth.</typeparam>
+        /// <typeparam name="TFifth">The type of the fifth.</typeparam>
+        /// <typeparam name="TSixth">The type of the sixth.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(string commandText, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Queries the specified command text.
+        /// </summary>
+        /// <typeparam name="TFirst">The type of the first.</typeparam>
+        /// <typeparam name="TSecond">The type of the second.</typeparam>
+        /// <typeparam name="TThird">The type of the third.</typeparam>
+        /// <typeparam name="TFourth">The type of the fourth.</typeparam>
+        /// <typeparam name="TFifth">The type of the fifth.</typeparam>
+        /// <typeparam name="TSixth">The type of the sixth.</typeparam>
+        /// <typeparam name="TSeventh">The type of the seventh.</typeparam>
+        /// <typeparam name="TReturn">The type of the return.</typeparam>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="map">The map.</param>
+        /// <param name="param">The parameter.</param>
+        /// <param name="splitOn">The split on.</param>
+        /// <returns></returns>
+        public IEnumerable<TReturn> Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(string commandText, Func<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn> map, object param = null, string splitOn = "id")
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TFirst, TSecond, TThird, TFourth, TFifth, TSixth, TSeventh, TReturn>(commandText, map, param, transaction: this.transaction, commandType: CommandType.Text, splitOn: splitOn);
+        }
+
+        /// <summary>
+        /// Executes the specified command text.
+        /// </summary>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public int Execute(string commandText, object param = null)
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Execute(commandText, param, commandType: CommandType.Text, transaction: this.transaction);
+        }
+
+        /// <summary>
+        /// Inserts the specified command text.
+        /// </summary>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public int Insert(string commandText, object param = null)
+        { 
+            this.CheckConnectionIsOpen();
+
+            commandText = commandText + "; SELECT LAST_INSERT_ID();";
+
+            return this.connection.Query<int>(commandText, param, commandType: CommandType.Text, transaction: this.transaction).SingleOrDefault();
+        }
+
+        /// <summary>
+        /// Updates the specified command text.
+        /// </summary>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public int Update(string commandText, object param = null)
+        {
+            this.CheckConnectionIsOpen();
+            AddAuditTrailFromUpdateQuery(commandText, param);
+
+            return this.connection.Execute(commandText, param, commandType: CommandType.Text, transaction: this.transaction);
+        }
+
+        /// <summary>
+        /// Executes the stored procedure.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="storedProcedureName">Name of the stored procedure.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public IEnumerable<TEntity> ExecStoredProcedure<TEntity>(string storedProcedureName, object param = null)
+        {
+            this.CheckConnectionIsOpen();
+
+            return this.connection.Query<TEntity>(storedProcedureName, param, commandType: CommandType.StoredProcedure, transaction: this.transaction);
+        }
+
+        /// <summary>
+        /// Executes the stored procedure with return value.
+        /// </summary>
+        /// <typeparam name="TEntity">The type of the entity.</typeparam>
+        /// <param name="storedProcedureName">Name of the stored procedure.</param>
+        /// <param name="param">The parameter.</param>
+        /// <returns></returns>
+        public int ExecStoredProcedureWithReturnValue<TEntity>(string storedProcedureName, object param = null)
+        {
+            this.CheckConnectionIsOpen();
+
+            var parameters = new DynamicParameters(param);
+            parameters.Add("@ReturnValue", dbType: DbType.Int32, direction: ParameterDirection.ReturnValue);
+
+            this.connection.Execute(storedProcedureName, parameters, commandType: CommandType.StoredProcedure, transaction: this.transaction);
+
+            return parameters.Get<int>("@ReturnValue");
+        }
+
+        /// <summary>
+        /// Performs application-defined tasks associated with freeing, releasing, or resetting unmanaged resources.
+        /// </summary>
+        public void Dispose()
+        {
+            this.Dispose(true);
+        }
+
+        /// <summary>
+        /// Releases unmanaged and - optionally - managed resources.
+        /// </summary>
+        /// <param name="disposing"><c>true</c> to release both managed and unmanaged resources; <c>false</c> to release only unmanaged resources.</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (this.connection == null || this.connection.State != ConnectionState.Open)
+            {
+                return;
+            }
+
+            this.Rollback();
+
+            if (this.providerName == "MySql.Data.MySqlClient")
+            {
+                this.CollectConnectionsID();
+            }
+
+            this.connection.Close();
+            this.connection.Dispose();
+        }
+
+        /// <summary>
+        /// Commits the changes.
+        /// </summary>
+        public void CommitChanges()
+        {
+            if (this.isTransaction && this.transaction != null)
+            {
+                this.transaction.Commit();
+                this.isTransaction = false;
+                // this.transaction = this.BeginTransaction();
+
+                AuditTrialSave();
+            }
+
+        }
+
+        /// <summary>
+        /// Rollbacks this instance.
+        /// </summary>
+        private void Rollback()
+        {
+            if (this.isTransaction && this.transaction != null)
+            {
+                this.transaction.Rollback();
+            }
+        }
+
+        /// <summary>
+        /// Kills the sleep connections.
+        /// </summary>
+        private void CollectConnectionsID()
+        {
+            if (ThreadCollectionDetails.LastKilledDateTime == null)
+                ThreadCollectionDetails.LastKilledDateTime = DateTime.Now;
+
+            //TODO: To kill the sleep connection.
+            //if (!this.isTransaction)
+            //{
+            //    if (ThreadCollectionDetails.LastKilledDateTime.Value.AddMinutes(10).AddMilliseconds(10) < DateTime.Now)
+            //    {
+            //        ThreadCollectionDetails.LastKilledDateTime = DateTime.Now;
+            //        var sleepConnection = this.Query<Process>("SELECT ID, TIME FROM information_schema.processlist where command='sleep'");
+
+            //        if (sleepConnection != null)
+            //        {
+            //            foreach (var item in sleepConnection)
+            //            {
+            //                if (item.Time > 2)
+            //                    this.Execute("kill " + item.ID);
+            //            }
+            //        }
+            //    }
+            //}
+        }
+
+        /// <summary>
+        /// Audits the trial save.
+        /// </summary>
+        private void AuditTrialSave()
+        {
+            if (auditTrialSMList != null && auditTrialSMList.Count() > 0)
+            {
+                ICentralizedAuthentication centralizedAuthentication = DependencyResolver.Current.GetService<ICentralizedAuthentication>();
+
+                foreach (var item in auditTrialSMList)
+                    centralizedAuthentication.SaveAuditTrail(item);
+            }
+        }
+
+        /// <summary>
+        /// Checks the connection is open.
+        /// </summary>
+        private void CheckConnectionIsOpen()
+        {
+            lock (this.lockObj)
+            {
+                if (this.connection.State == ConnectionState.Closed)
+                {
+                    this.connection.Open();
+
+                    //if (this.providerName == "MySql.Data.MySqlClient")
+                    //{
+                    //    this.KillSleepConnections();
+                    //}
+                }
+            }
+        }
+
+        /// <summary>
+        /// Adds the audit trail from update query.
+        /// </summary>
+        /// <param name="commandText">The command text.</param>
+        /// <param name="param">The parameter.</param>
+        private void AddAuditTrailFromUpdateQuery(string commandText, object param = null)
+        {
+            AuditTrialServiceModel auditTrialSM = new AuditTrialServiceModel();
+            string tableName = auditTrialSM.TableName = commandText.ToLower().Replace("update", string.Empty).Trim().Split(' ')[0];
+            string whereCondition = string.Empty;
+            List<string> paramName = new List<string>();
+            this.CheckConnectionIsOpen();
+
+            if (commandText.ToLower().Contains("where"))
+                whereCondition = commandText.ToLower().Split(new string[] { "where" }, StringSplitOptions.None)[1];
+
+            foreach (string paramValue in commandText.ToLower().Split(new string[] { "where" }, StringSplitOptions.None)[0].Split(','))
+            {
+                paramName.Add(paramValue.ToLower().Replace("update", string.Empty).Replace("set", string.Empty).Trim().Replace(tableName, string.Empty).Split('=')[0].Trim());
+            }
+
+            string selectQuery = "select " + string.Join(",", paramName.ToArray()) + " from " + tableName + (!string.IsNullOrEmpty(whereCondition) ? " where " + whereCondition : string.Empty);
+
+            //var modelType = Assembly.Load("SAPPERI.Model").GetTypes().FirstOrDefault(x => (x.Namespace == "SAPPERI.Model.Model" || x.Namespace == "SAPPERI.Model") && x.Name.ToLower() == tableName.ToLower());
+            var result = (IEnumerable<IDictionary<string, object>>)this.connection.Query(selectQuery, param);
+            auditTrialSM.FieldsNames = paramName.ToArray();
+
+            if (param != null && result != null)
+            {
+                List<string> oldValues = new List<string>();
+                List<string> newValues = new List<string>();
+
+
+                int incrementCount = 0;
+
+                foreach (string item in paramName)
+                {
+                    foreach (var row in result)
+                    {
+                        foreach (var column in row)
+                        {
+
+                            if (column.Key == item)
+                                oldValues.Add(Convert.ToString(column.Value));
+                        }
+                    }
+
+                    Type myTypeparam = param.GetType();
+                    IList<PropertyInfo> propsparam = new List<PropertyInfo>(myTypeparam.GetProperties());
+
+                    foreach (PropertyInfo prop in propsparam)
+                    {
+                        if (prop.Name.ToLower() == item.ToLower())
+                            newValues.Add(Convert.ToString(prop.GetValue(param, null)));
+                    }
+
+                    incrementCount++;
+                }
+
+                auditTrialSM.OldValues = oldValues.ToArray();
+                auditTrialSM.NewValues = newValues.ToArray();
+            }
+
+            auditTrialSMList.Add(auditTrialSM);
+        }
+    }
+
+    /// <summary>
+    /// For bind the 
+    /// </summary>
+    public class Process
+    {
+        public Int64 ID { get; set; }
+        public Int64 Time { get; set; }
+    }
+
+}
+
