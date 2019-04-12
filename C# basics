@@ -7,6 +7,23 @@ You could probably do anything using a Controller instead of an ApiController wi
 manual coding. In the end, both controllers build upon the ASP.NET foundation. But having a REST-ful 
 API is such a common requirement today that WebAPI was created to simplify the implementation of a such an API.
 
+@URL.ACTION - CONTROLLER METHOD CALLING
+=======================================
+<button type="button" class="btn save round button" id="btnSave" data-SaveOvertimeBataUrl="@Url.Action("SaveDriverOvertimeBataAllowances", "DriverOvertimeBata")">
+                        Save
+                    </button>
+                    
+                    
+ function saveovertime(data) {
+        $.ajax({
+            type: "POST",
+            url: $("#btnSave").attr('data-SaveOvertimeBataUrl'),
+            dataType: "json",
+            data: data,
+            success: function (msg) {}
+...........
+}
+
 AccidentClaim.cshtml
 ====================
 @model  SAPPERI.Model.ViewModel.AccidentViewModel
